@@ -6,7 +6,11 @@
 //
 
 struct TodoItem {
-    enum Importance { case unimportant, oridnary, important }
+    enum Importance: String {
+        case unimportant = "unimportant",
+             ordinary = "ordinary",
+             important = "important"
+    }
     let id: String
     let text: String
     let importance: Importance
@@ -17,11 +21,11 @@ struct TodoItem {
     
     init(id: String = UUID().uuidString,
          text: String,
-         importance: Importance = .oridnary,
-         deadline: Date?,
+         importance: Importance = .ordinary,
+         deadline: Date? = nil,
          isDone: Bool,
          dateCreated: Date = Date(),
-         dateChanged: Date?) {
+         dateChanged: Date? = nil) {
         self.id = id
         self.text = text
         self.importance = importance
@@ -29,6 +33,36 @@ struct TodoItem {
         self.isDone = isDone
         self.dateCreated = dateCreated
         self.dateChanged = dateChanged
+    }
+}
+
+extension TodoItem {
+    static func parse(json: Any) -> TodoItem? {
+        guard let dict = json as? [String: Any],
+              let id = dict["id"] as? String,
+              let text = dict["text"] as? String,
+              let isDone = dict["isDone"] as? Bool,
+              let creationTimestamp = dict["dateCreated"] as? TimeInterval else { return nil }
+        
+        let importance = Importance(rawValue: dict["importance"] as? String ?? "ordinary") ?? .ordinary
+        var deadline: Date? = nil
+        if let deadlineTimestamp = dict["deadline"] as? TimeInterval {
+            deadline = Date(timeIntervalSince1970: deadlineTimestamp)
+        }
+        var dateChanged: Date? = nil
+        if let changeTimestamp = dict["dateChanged"] as? TimeInterval {
+            dateChanged = Date(timeIntervalSince1970: changeTimestamp)
+        }
+
+        
+        return TodoItem(id: id, 
+                        text: text,
+                        importance: importance,
+                        deadline: deadline,
+                        isDone: isDone,
+                        dateCreated: Date(timeIntervalSince1970: creationTimestamp),
+                        dateChanged: dateChanged
+        )
     }
 }
 
