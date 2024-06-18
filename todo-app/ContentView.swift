@@ -64,6 +64,25 @@ extension TodoItem {
                         dateChanged: dateChanged
         )
     }
+    
+    var json: Any {
+        var result: [String: Any] = [
+            "id": id,
+            "text": text,
+            "isDone": isDone,
+            "dateCreated": dateCreated.timeIntervalSince1970
+        ]
+        if importance != .ordinary {
+            result["importance"] = importance.rawValue
+        }
+        if let deadline = deadline {
+            result["deadline"] = deadline.timeIntervalSince1970
+        }
+        if let dateChanged = dateChanged {
+            result["dateChanged"] = dateChanged.timeIntervalSince1970
+        }
+        return result
+    }
 }
 
 import SwiftUI
