@@ -18,19 +18,46 @@ final class todo_appTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-        // Any test you write for XCTest can be annotated as throws and async.
-        // Mark your test throws to produce an unexpected failure when your test encounters an uncaught error.
-        // Mark your test async to allow awaiting for asynchronous code to complete. Check the results with assertions afterwards.
-    }
+    func testJsonSerialization() {
+        let dateCreated = Date()
+        let item = TodoItem(id: "1", text: "Test Task", importance: .important, deadline: Date().addingTimeInterval(3600), isDone: false, dateCreated: dateCreated, dateChanged: nil)
 
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
+        let json = item.json as? [String: Any]
+
+        XCTAssertEqual(json?["id"] as? String, "1")
+        XCTAssertEqual(json?["text"] as? String, "Test Task")
+        XCTAssertEqual(json?["importance"] as? String, TodoItem.Importance.important.rawValue)
+        XCTAssertEqual(json?["isDone"] as? Bool, false)
+        XCTAssertEqual(json?["dateCreated"] as? TimeInterval, dateCreated.timeIntervalSince1970)
+
+        if let deadlineTimestamp = json?["deadline"] as? TimeInterval {
+            XCTAssertEqual(Date(timeIntervalSince1970: deadlineTimestamp), item.deadline)
         }
+
+        XCTAssertNil(json?["dateChanged"])
     }
 
+    func testJsonParsing() {
+        let json: [String: Any] = [
+            "id": "2",
+            "text": "Another Task",
+            "importance": TodoItem.Importance.ordinary.rawValue,
+            "isDone": true,
+            "dateCreated": Date().timeIntervalSince1970
+        ]
+
+        guard let item = TodoItem.parse(json: json) else {
+            XCTFail("Failed to parse JSON")
+            return
+        }
+
+        XCTAssertEqual(item.id, "2")
+        XCTAssertEqual(item.text, "Another Task")
+        XCTAssertEqual(item.importance, TodoItem.Importance.ordinary)
+        XCTAssertEqual(item.isDone, true)
+        XCTAssertEqual(item.dateCreated.timeIntervalSince1970, json["dateCreated"] as? TimeInterval)
+
+        XCTAssertNil(item.deadline)
+        XCTAssertNil(item.dateChanged)
+    }
 }
