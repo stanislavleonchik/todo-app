@@ -6,21 +6,12 @@
 //
 
 import XCTest
-@testable import todo_app
+import todo_app
 
 final class todo_appTests: XCTestCase {
-
-    override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-    }
-
-    override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-    }
-
-    func testJsonSerialization() {
+    func test_json_serialization() {
         let dateCreated = Date()
-        let item = TodoItem(id: "1", text: "Test Task", importance: .important, deadline: Date().addingTimeInterval(3600), isDone: false, dateCreated: dateCreated, dateChanged: nil)
+        let item = TodoItem(id: "1", text: "Test Task", importance: .important, deadline: Date(timeIntervalSince1970: 0), isDone: false, dateCreated: dateCreated, dateChanged: nil)
 
         let json = item.json as? [String: Any]
 
@@ -31,13 +22,13 @@ final class todo_appTests: XCTestCase {
         XCTAssertEqual(json?["dateCreated"] as? TimeInterval, dateCreated.timeIntervalSince1970)
 
         if let deadlineTimestamp = json?["deadline"] as? TimeInterval {
-            XCTAssertEqual(Date(timeIntervalSince1970: deadlineTimestamp), item.deadline)
+            XCTAssertEqual(deadlineTimestamp, item.deadline?.timeIntervalSince1970)
         }
 
         XCTAssertNil(json?["dateChanged"])
     }
 
-    func testJsonParsing() {
+    func test_json_parsing() throws {
         let json: [String: Any] = [
             "id": "2",
             "text": "Another Task",
@@ -46,10 +37,7 @@ final class todo_appTests: XCTestCase {
             "dateCreated": Date().timeIntervalSince1970
         ]
 
-        guard let item = TodoItem.parse(json: json) else {
-            XCTFail("Failed to parse JSON")
-            return
-        }
+        let item = try XCTUnwrap(TodoItem.parse(json: json))
 
         XCTAssertEqual(item.id, "2")
         XCTAssertEqual(item.text, "Another Task")
