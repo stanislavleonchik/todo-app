@@ -71,19 +71,8 @@ final class FileCache {
 
             var loadedItems: [String: TodoItem] = [:]
             for row in rows {
-                let columns = row.split(separator: ",", omittingEmptySubsequences: false).map { String($0) }
-                guard columns.count == 7 else { continue }
-
-                let id = columns[0]
-                let text = columns[1].trimmingCharacters(in: CharacterSet(charactersIn: "\""))
-                let importance = TodoItem.Importance(rawValue: columns[2]) ?? .ordinary
-                let deadline = TimeInterval(columns[3])
-                let isDone = Bool(columns[4]) ?? false
-                let dateCreated = Date(timeIntervalSince1970: TimeInterval(columns[5])!)
-                let dateChanged = TimeInterval(columns[6]).map { Date(timeIntervalSince1970: $0) }
-
-                let item = TodoItem(id: id, text: text, importance: importance, deadline: deadline.map { Date(timeIntervalSince1970: $0) }, isDone: isDone, dateCreated: dateCreated, dateChanged: dateChanged)
-                loadedItems[item.id] = item
+                guard let temp = TodoItem.parse(csv: row) else { continue }
+                loadedItems[temp.id] = temp
             }
 
             for (id, item) in loadedItems {
