@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct TodoItem {
+struct TodoItem: Identifiable {
     enum Importance: String {
         case unimportant = "unimportant"
         case ordinary = "ordinary"
@@ -17,7 +17,7 @@ struct TodoItem {
     let text: String
     let importance: Importance
     let deadline: Date?
-    let isDone: Bool
+    var isDone: Bool
     let dateCreated: Date
     let dateChanged: Date?
     
