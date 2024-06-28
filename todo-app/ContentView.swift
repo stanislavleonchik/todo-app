@@ -19,14 +19,30 @@ final class EventTodolistHolder: ObservableObject {
         Todoitem(text: "Helllo\nabacaba\nabacaba\nabacaba", importance: .unimportant, isDone: false),
         Todoitem(text: "Купить", importance: .unimportant, deadline: Date(), isDone: false)
     ]
+    
+    func removeItem(at index: Int) {
+        guard index < items.count else { return }
+        items.remove(at: index)
+    }
 }
 
 struct TodoitemView: View {
     @Environment(\.dismiss) var dismiss
     @Binding var item: Todoitem
+    @ObservedObject var todoList: EventTodolistHolder
+    var index: Int
+    @State private var localItem: Todoitem
     @State private var selectedIcon: Int = 0
     @State private var isDeadlineSet: Bool = false
     private let importanceOptions: [Todoitem.Importance] = [.unimportant, .ordinary, .important]
+    
+    init(item: Binding<Todoitem>, todoList: EventTodolistHolder, index: Int) {
+        self._item = item
+        self._localItem = State(initialValue: item.wrappedValue)
+        self.todoList = todoList
+        self.index = index
+        self._isDeadlineSet = State(initialValue: item.wrappedValue.deadline != nil)
+    }
     
     var body: some View {
         NavigationStack {
@@ -41,42 +57,59 @@ struct TodoitemView: View {
                 }
                 deleteButton
             }
-            .modifier(FormNavigationModifier())
-            
-        }
-    }
-    
-    struct FormNavigationModifier: ViewModifier {
-        func body(content: Content) -> some View {
-            content
-            .navigationTitle("Дело")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Отменить") {
-                        
-                    }
-                }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Сохранить") {
-                        
-                    }.fontWeight(.bold)
-                }
+            .modifier(FormNavigationModifier(
+                saveAction: itemSave,
+                cancelAction: itemCancel
+            ))
+            .onAppear {
+                isDeadlineSet = localItem.deadline != nil
             }
         }
     }
     
+    private func itemSave() {
+        item = localItem
+        dismiss()
+    }
+    
+    private func itemCancel() {
+        dismiss()
+    }
+    
+    struct FormNavigationModifier: ViewModifier {
+        let saveAction: () -> Void
+        let cancelAction: () -> Void
+        
+        func body(content: Content) -> some View {
+            content
+                .navigationTitle("Дело")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button("Отменить") {
+                            cancelAction()
+                        }
+                    }
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button("Сохранить") {
+                            saveAction()
+                        }
+                        .fontWeight(.bold)
+                    }
+                }
+        }
+    }
+    
     var textEditor: some View {
-        TextEditor(text: $item.text)
+        TextEditor(text: $localItem.text)
             .font(.custom("SF Pro Text", size: 17))
             .multilineTextAlignment(.leading)
             .frame(maxWidth: .infinity, minHeight: 100, maxHeight: .infinity, alignment: .leading)
             .textEditorStyle(.automatic)
             .overlay(
-                Text(
-                    item.text.isEmpty ? "Что надо сделать?" : "")
-                .foregroundColor(Color("ColorLabelTertiary"))
-                .padding(.top, 5),
+                Text(localItem.text.isEmpty ? "Что надо сделать?" : "")
+                    .foregroundColor(Color("ColorLabelTertiary"))
+                    .padding(.top, 5),
                 alignment: .topLeading
             )
     }
@@ -88,28 +121,46 @@ struct TodoitemView: View {
             importancePicker
         }
     }
-        
-    var deadlineRow: some View {
-        Toggle(isOn: $isDeadlineSet, label: {
-            HStack(spacing: 25) {
-                VStack {
-                    Text("Сделать до")
-                    if let deadline = $item.wrappedValue.deadline {
-                        Text(deadline, style: .date)
-                            .font(.custom("SF Pro Text", size: 13))
-                            .fontWeight(.bold)
-                            .foregroundStyle(.blue)
-                            .padding(.leading, -12)
-                    }
-                }
-            }
-        })
-        .onChange(of: isDeadlineSet) { oldValue, newValue in
-            if !newValue {
-                item.deadline = nil
+    
+    var importancePicker: some View {
+        Picker("Select Icon", selection: $selectedIcon) {
+            arrowdownImage.tag(0)
+            Text("нет").tag(1)
+            Image("Exclamationmark.2").tag(2)
+        }
+        .pickerStyle(.segmented)
+        .padding(.leading, 15)
+        .onAppear {
+            if let currentIndex = importanceOptions.firstIndex(where: { $0 == localItem.importance }) {
+                selectedIcon = currentIndex
             }
         }
+        .onChange(of: selectedIcon) { oldValue, newValue in
+            localItem.importance = importanceOptions[newValue]
+        }
     }
+    
+    var deadlineRow: some View {
+            Toggle(isOn: $isDeadlineSet, label: {
+                HStack(spacing: 25) {
+                    VStack {
+                        Text("Сделать до")
+                        if let deadline = $localItem.wrappedValue.deadline {
+                            Text(deadline, style: .date)
+                                .font(.custom("SF Pro Text", size: 13))
+                                .fontWeight(.bold)
+                                .foregroundStyle(.blue)
+                                .padding(.leading, -12)
+                        }
+                    }
+                }
+            })
+            .onChange(of: isDeadlineSet) { oldValue, newValue in
+                if !newValue {
+                    localItem.deadline = nil
+                }
+            }
+        }
     
     var deadlinePicker: some View {
         Group {
@@ -117,8 +168,8 @@ struct TodoitemView: View {
                 DatePicker(
                     "Start Date",
                     selection: Binding<Date>(
-                        get: { item.deadline ?? Date() },
-                        set: { newItem in item.deadline = newItem }
+                        get: { localItem.deadline ?? Date(timeIntervalSinceNow: 86400) },
+                        set: { newItem in localItem.deadline = newItem }
                     ),
                     displayedComponents: [.date]
                 )
@@ -127,27 +178,10 @@ struct TodoitemView: View {
         }
     }
     
-    var importancePicker: some View {
-        Picker("Select Icon", selection: $selectedIcon) {
-            arrowdownImage.tag(0)
-            Text("нет").tag(1)
-            exclamationMarkImage.tag(2)
-        }
-        .pickerStyle(.segmented)
-        .padding(.leading, 15)
-        .onAppear {
-            if let currentIndex = importanceOptions.firstIndex(where: { $0 == item.importance }) {
-                selectedIcon = currentIndex
-            }
-        }
-        .onChange(of: selectedIcon) { oldValue, newValue in
-            item.importance = importanceOptions[newValue]
-        }
-    }
-    
     var deleteButton: some View {
         Section {
             Button("Удалить") {
+                todoList.removeItem(at: index)
                 dismiss()
             }
             .foregroundStyle(Color("ColorRed"))
@@ -156,7 +190,6 @@ struct TodoitemView: View {
         }
     }
 }
-
 struct ContentView: View {
     @StateObject private var todoList = EventTodolistHolder()
     @State private var showModal = false
@@ -164,7 +197,7 @@ struct ContentView: View {
     
     var body: some View {
         VStack {
-            todoitemList()
+            todoitemNavigationStack()
             Spacer()
             addButton
         }
@@ -172,7 +205,7 @@ struct ContentView: View {
         .environmentObject(todoList)
     }
     
-    func todoitemList() ->some View {
+    func todoitemNavigationStack() -> some View {
         NavigationStack {
             List {
                 ForEach(todoList.items.indices, id: \.self) { index in
@@ -188,7 +221,7 @@ struct ContentView: View {
                         )
                         .swipeActions(edge: .trailing) {
                             Button(role: .destructive) {
-                                todoList.items.remove(at: index)
+                                todoList.removeItem(at: index)
                             } label: {
                                 Image(systemName: "trash")
                             }
@@ -229,7 +262,7 @@ struct ContentView: View {
         .listRowBackground(Color("ColorBackSecondary"))
         .navigationTitle("Мои дела")
         .popover(isPresented: $showModal) {
-            TodoitemView(item: $todoList.items[selectedItemIndex])
+            TodoitemView(item: $todoList.items[selectedItemIndex], todoList: todoList, index: selectedItemIndex)
                 .environmentObject(todoList)
         }
     }
