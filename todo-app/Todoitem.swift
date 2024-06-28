@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Todoitem: Identifiable {
+struct Todoitem: Identifiable, Hashable {
     enum Importance: String {
         case unimportant = "unimportant"
         case ordinary = "ordinary"

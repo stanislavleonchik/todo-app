@@ -15,7 +15,7 @@ extension Collection {
 }
 
 final class FileCache {
-    private(set) var todoitems: [String: Todoitem] = [:]
+    var todoitems: [String: Todoitem] = [:]
     var items: [Todoitem] {
         return Array(todoitems.values) // O(n)
     }
@@ -26,6 +26,10 @@ final class FileCache {
     
     func removeItem(_ id: String) {
         todoitems[id] = nil
+    }
+    
+    func updateItem(_ id: String, _ item: Todoitem) {
+        todoitems[id] = item
     }
     
     func save(to fileName: String) throws {
