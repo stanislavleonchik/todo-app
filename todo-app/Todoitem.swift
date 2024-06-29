@@ -20,6 +20,7 @@ struct Todoitem: Identifiable, Hashable {
     var isDone: Bool
     let dateCreated: Date
     let dateChanged: Date?
+    var color: String? = nil
     
     init(id: String = UUID().uuidString,
          text: String,
