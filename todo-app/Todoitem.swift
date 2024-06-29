@@ -7,19 +7,20 @@
 
 import Foundation
 
-struct TodoItem {
+struct Todoitem: Identifiable, Hashable {
     enum Importance: String {
         case unimportant = "unimportant"
         case ordinary = "ordinary"
         case important = "important"
     }
     let id: String
-    let text: String
-    let importance: Importance
-    let deadline: Date?
-    let isDone: Bool
+    var text: String
+    var importance: Importance
+    var deadline: Date?
+    var isDone: Bool
     let dateCreated: Date
     let dateChanged: Date?
+    var color: String? = nil
     
     init(id: String = UUID().uuidString,
          text: String,
@@ -38,8 +39,8 @@ struct TodoItem {
     }
 }
 
-extension TodoItem {
-    static func parse(json: Any) -> TodoItem? {
+extension Todoitem {
+    static func parse(json: Any) -> Todoitem? {
         guard let dict = json as? [String: Any],
               let id = dict["id"] as? String,
               let text = dict["text"] as? String,
@@ -56,13 +57,36 @@ extension TodoItem {
             dateChanged = Date(timeIntervalSince1970: changeTimestamp)
         }
 
-        return TodoItem(id: id,
+        return Todoitem(id: id,
                         text: text,
                         importance: importance,
                         deadline: deadline,
                         isDone: isDone,
                         dateCreated: Date(timeIntervalSince1970: creationTimestamp),
                         dateChanged: dateChanged
+        )
+    }
+    
+    static func parse(csv: Substring) -> Todoitem? {
+        let columns = csv.split(separator: ",", omittingEmptySubsequences: false).map { String($0) }
+        guard columns.count == 7 else { return nil }
+
+        let id = columns[0]
+        let text = columns[1].trimmingCharacters(in: CharacterSet(charactersIn: "\""))
+        let importance = Todoitem.Importance(rawValue: columns[2]) ?? .ordinary
+        let deadline = TimeInterval(columns[3])
+        let isDone = Bool(columns[4]) ?? false
+        let dateCreated = Date(timeIntervalSince1970: TimeInterval(columns[5])!)
+        let dateChanged = TimeInterval(columns[6]).map { Date(timeIntervalSince1970: $0) }
+
+        return Todoitem(
+            id: id,
+            text: text,
+            importance: importance,
+            deadline: deadline.map { Date(timeIntervalSince1970: $0) },
+            isDone: isDone,
+            dateCreated: dateCreated,
+            dateChanged: dateChanged
         )
     }
     

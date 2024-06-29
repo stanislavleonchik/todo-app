@@ -15,17 +15,21 @@ extension Collection {
 }
 
 final class FileCache {
-    private(set) var todoItems: [String: TodoItem] = [:]
-    var items: [TodoItem] {
-        return Array(todoItems.values) // O(n)
+    var todoitems: [String: Todoitem] = [:]
+    var items: [Todoitem] {
+        return Array(todoitems.values) // O(n)
     }
 
-    func addItem(_ item: TodoItem) {
-        todoItems[item.id] = item
+    func addItem(_ item: Todoitem) {
+        todoitems[item.id] = item
     }
     
     func removeItem(_ id: String) {
-        todoItems[id] = nil
+        todoitems[id] = nil
+    }
+    
+    func updateItem(_ id: String, _ item: Todoitem) {
+        todoitems[id] = item
     }
     
     func save(to fileName: String) throws {
@@ -34,7 +38,7 @@ final class FileCache {
 
         switch fileExtension {
         case "json":
-            let jsonData = try JSONSerialization.data(withJSONObject: todoItems.values.map { $0.json }, options: .prettyPrinted)
+            let jsonData = try JSONSerialization.data(withJSONObject: todoitems.values.map { $0.json }, options: .prettyPrinted)
             try jsonData.write(to: fileURL)
         case "csv":
             var csvString = "id,text,importance,deadline,isDone,dateCreated,dateChanged\n"
@@ -59,9 +63,9 @@ final class FileCache {
         case "json":
             guard let jsonArray = try JSONSerialization.jsonObject(with: try Data(contentsOf: fileURL), options: []) as? [[String: Any]] else { return }
             for json in jsonArray {
-                let temp = TodoItem.parse(json: json)
+                let temp = Todoitem.parse(json: json)
                 if let id = temp?.id {
-                    todoItems[id] = temp
+                    todoitems[id] = temp
                 }
             }
             
@@ -69,25 +73,14 @@ final class FileCache {
             let csvString = try String(contentsOf: fileURL)
             let rows = csvString.split(separator: "\n").dropFirst()
 
-            var loadedItems: [String: TodoItem] = [:]
+            var loadedItems: [String: Todoitem] = [:]
             for row in rows {
-                let columns = row.split(separator: ",", omittingEmptySubsequences: false).map { String($0) }
-                guard columns.count == 7 else { continue }
-
-                let id = columns[0]
-                let text = columns[1].trimmingCharacters(in: CharacterSet(charactersIn: "\""))
-                let importance = TodoItem.Importance(rawValue: columns[2]) ?? .ordinary
-                let deadline = TimeInterval(columns[3])
-                let isDone = Bool(columns[4]) ?? false
-                let dateCreated = Date(timeIntervalSince1970: TimeInterval(columns[5])!)
-                let dateChanged = TimeInterval(columns[6]).map { Date(timeIntervalSince1970: $0) }
-
-                let item = TodoItem(id: id, text: text, importance: importance, deadline: deadline.map { Date(timeIntervalSince1970: $0) }, isDone: isDone, dateCreated: dateCreated, dateChanged: dateChanged)
-                loadedItems[item.id] = item
+                guard let temp = Todoitem.parse(csv: row) else { continue }
+                loadedItems[temp.id] = temp
             }
 
             for (id, item) in loadedItems {
-                todoItems[id] = item
+                todoitems[id] = item
             }
         default:
             throw NSError(domain: "FileCacheError", code: 1, userInfo: [NSLocalizedDescriptionKey: "Unsupported file format"])
