@@ -1,23 +1,10 @@
-//
-//  FileCache.swift
-//  todo-app
-//
-//  Created by Stanislav Leonchik on 21.06.2024.
-//
-
 import Foundation
 
-extension Collection {
-    /// Returns the element at the specified index if it is within bounds, otherwise nil.
-    subscript (safe index: Index) -> Element? {
-        return indices.contains(index) ? self[index] : nil
-    }
-}
 
 final class FileCache {
     var todoitems: [String: Todoitem] = [:]
     var items: [Todoitem] {
-        return Array(todoitems.values) // O(n)
+        return Array(todoitems.values)
     }
 
     func addItem(_ item: Todoitem) {
@@ -30,6 +17,15 @@ final class FileCache {
     
     func updateItem(_ id: String, _ item: Todoitem) {
         todoitems[id] = item
+    }
+    
+    subscript(id: String) -> Todoitem? {
+        get {
+            return todoitems[id]
+        }
+        set {
+            todoitems[id] = newValue
+        }
     }
     
     func save(to fileName: String) throws {
@@ -89,5 +85,12 @@ final class FileCache {
     
     private func getCacheDirectory() -> URL? {
         FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[safe: 0]
+    }
+}
+
+extension Collection {
+    /// Returns the element at the specified index if it is within bounds, otherwise nil.
+    subscript (safe index: Index) -> Element? {
+        return indices.contains(index) ? self[index] : nil
     }
 }

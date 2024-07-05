@@ -1,15 +1,8 @@
-//
-//  ViewModel.swift
-//  todo-app
-//
-//  Created by Stanislav Leonchik on 29.06.2024.
-//
-
 import SwiftUI
 
 
 final class ViewModel: ObservableObject {
-    @Published var todoitems: [String: Todoitem] = [:]
+    @Published var todoitems = FileCache()
     @Published var isShown: Bool = false
     @Published var sortOption: SortOption = .none
     
@@ -32,10 +25,10 @@ final class ViewModel: ObservableObject {
     }
     
     var items: [Todoitem] {
-        return Array(todoitems.values)
+        todoitems.items
     }
     
-    @Published private(set) var filteredSortedItems: [Todoitem] = []
+    @Published  var filteredSortedItems: [Todoitem] = []
     
     func toggleItem(_ id: String) {
         todoitems[id]?.isDone.toggle()

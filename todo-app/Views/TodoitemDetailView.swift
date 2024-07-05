@@ -1,10 +1,3 @@
-//
-//  TodoitemDetailView.swift
-//  todo-app
-//
-//  Created by Stanislav Leonchik on 29.06.2024.
-//
-
 import SwiftUI
 
 

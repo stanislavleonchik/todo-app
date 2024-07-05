@@ -11,8 +11,8 @@ import SwiftUI
 struct todo_appApp: App {
     var body: some Scene {
         WindowGroup {
-            // TODO: router - environment (NavigationStack)
             TodoView()
+            
         }
     }
 }

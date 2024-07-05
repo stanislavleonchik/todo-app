@@ -1,10 +1,3 @@
-//
-//  ContentView.swift
-//  todo-app
-//
-//  Created by Stanislav Leonchik on 18.06.2024.
-//
-
 import SwiftUI
 
 
@@ -12,22 +5,22 @@ struct TodoView: View {
     @StateObject private var viewModel = ViewModel()
     @State private var showModal = false
     @State private var selectedItem: Todoitem?
-    var selectedItemIndex: Int?
     
     var body: some View {
-        VStack {
-            NavigationStack {
+        NavigationStack {
+            VStack {
+                headerView
                 todoitemNavigationStack
+                Spacer()
+                addButton
             }
-            Spacer()
-            addButton
+            .background(Color("ColorBackiOSPrimary"))
+            .listRowBackground(Color("ColorBackSecondary"))
+            .navigationTitle("Мои дела")
         }
-        .background(Color("ColorBackiOSPrimary"))
-        .environmentObject(viewModel)
     }
     
-    @ViewBuilder
-    private func headerView() -> some View {
+    var headerView: some View {
         HStack {
             VStack(alignment: .leading) {
                 Text("Выполнено — \(viewModel.completedCount)")
@@ -61,43 +54,46 @@ struct TodoView: View {
                     .foregroundColor(.blue)
             }
         }
-        .padding(.vertical, 8)
+        .padding(.vertical, 0)
+        .padding(.horizontal, 16)
     }
     
+    let newRow = [Todoitem(text: "Новое", isDone: false)]
+    
     var todoitemNavigationStack: some View {
-        List {
-            Section(header: headerView()) {
-                ForEach(viewModel.filteredSortedItems) { item in
-                    TodoitemRowView(item: item) {
-                        viewModel.toggleItem(item.id)
+        List(viewModel.filteredSortedItems + newRow) { item in
+            if item != newRow[0] {
+                TodoitemRowView(item: item) {
+                    viewModel.toggleItem(item.id)
+                }
+                .onTapGesture {
+                    selectedItem = item
+                    showModal = true
+                }
+                .swipeActions(edge: .trailing) {
+                    Button(role: .destructive) {
+                        viewModel.removeItem(item.id)
+                    } label: {
+                        Image(systemName: "trash")
                     }
-                    .onTapGesture {
+                    Button {
                         selectedItem = item
                         showModal = true
+                    } label: {
+                        Image(systemName: "info.circle")
                     }
-                    .swipeActions(edge: .trailing) {
-                        Button(role: .destructive) {
-                            viewModel.removeItem(item.id)
-                        } label: {
-                            Image(systemName: "trash")
-                        }
-                        Button {
-                            selectedItem = item
-                            showModal = true
-                        } label: {
-                            Image(systemName: "info.circle")
-                        }
-                        .tint(Color("ColorGrayLight"))
-                    }
-                    .swipeActions(edge: .leading) {
-                        Button {
-                            viewModel.toggleItem(item.id)
-                        } label: {
-                            Image(systemName: "checkmark.circle")
-                        }
-                        .tint(.green)
-                    }
+                    .tint(Color("ColorGrayLight"))
                 }
+                .swipeActions(edge: .leading) {
+                    Button {
+                        viewModel.toggleItem(item.id)
+                    } label: {
+                        Image(systemName: "checkmark.circle")
+                    }
+                    .tint(.green)
+                }
+            }
+            else {
                 Text("Новое")
                     .foregroundStyle(Color("ColorLabelTertiary"))
                     .padding(.leading, 35)
@@ -108,16 +104,15 @@ struct TodoView: View {
                         selectedItem = newItem
                         showModal = true
                     }
-                    .navigationTitle("Мои дела")
-                    .listRowBackground(Color("ColorBackSecondary"))
-                    .navigationTitle("Мои дела")
-                    .popover(item: $selectedItem) { item in
+                    .sheet(item: $selectedItem) { item in
                         NavigationStack {
                             TodoitemDetailView(item: item)
                         }
                     }
             }
         }
+        .listStyle(InsetGroupedListStyle())
+        .navigationTitle("Мои дела")
     }
     
     var addButton: some View {
