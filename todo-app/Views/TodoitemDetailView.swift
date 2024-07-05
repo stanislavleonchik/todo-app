@@ -1,12 +1,12 @@
 import SwiftUI
 
-
 struct TodoitemDetailView: View {
+    @EnvironmentObject var viewModel: ViewModel
     var item: Todoitem
     
     @Environment(\.dismiss) var dismiss
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
-    @EnvironmentObject var viewModel: ViewModel
+    
     @State private var localItem: Todoitem
     @State private var selectedIcon: Int
     @State private var isDeadlineSet: Bool
@@ -27,40 +27,42 @@ struct TodoitemDetailView: View {
     }
     
     var body: some View {
-        GeometryReader { geometry in
-            Form {
-                if horizontalSizeClass == .regular {
-                    HStack {
-                        textEditor
+        NavigationView {
+            GeometryReader { geometry in
+                Form {
+                    if horizontalSizeClass == .regular {
+                        HStack {
+                            textEditor
+                                .frame(width: geometry.size.width / 2)
+                            VStack {
+                                importanceRow
+                                colorPickerLink
+                                DeadlineView
+                                deadlinePicker
+                                Spacer()
+                            }
                             .frame(width: geometry.size.width / 2)
-                        VStack {
-                            importanceRow
-                            DeadlineView
-                            deadlinePicker
-                            colorPickerLink
-                            Spacer()
                         }
-                        .frame(width: geometry.size.width / 2)
-                    }
-                } else {
-                    textEditor
-                    Section {
-                        List {
-                            importanceRow
-                            DeadlineView
-                            deadlinePicker
-                            colorPickerLink
+                    } else {
+                        textEditor
+                        Section {
+                            List {
+                                importanceRow
+                                colorPickerLink
+                                DeadlineView
+                                deadlinePicker
+                            }
                         }
                     }
+                    deleteButton
                 }
-                deleteButton
-            }
-            .modifier(FormNavigationModifier(
-                saveAction: itemSave,
-                cancelAction: itemCancel
-            ))
-            .onAppear {
-                isDeadlineSet = localItem.deadline != nil
+                .modifier(FormNavigationModifier(
+                    saveAction: itemSave,
+                    cancelAction: itemCancel
+                ))
+                .onAppear {
+                    isDeadlineSet = localItem.deadline != nil
+                }
             }
         }
     }
@@ -180,7 +182,7 @@ struct TodoitemDetailView: View {
                     .font(.custom("SF Pro Text", size: 13))
                     .fontWeight(.bold)
                     .foregroundStyle(.blue)
-                    .padding(.leading, -12)
+                    .padding(.leading, -10)
             }
         }
     }
@@ -200,8 +202,8 @@ struct TodoitemDetailView: View {
                     displayedComponents: [.date]
                 )
                 .datePickerStyle(.graphical)
-                .transition(.move(edge: .top)) // Add this line for transition
-                .animation(.easeInOut, value: isDatePickerVisible) // Add this line for animation
+                .transition(.move(edge: .top))
+                .animation(.easeInOut, value: isDatePickerVisible)
             }
         }
     }
