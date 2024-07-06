@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 struct Todoitem: Identifiable, Hashable {
     enum Importance: String {
@@ -6,6 +7,24 @@ struct Todoitem: Identifiable, Hashable {
         case ordinary = "ordinary"
         case important = "important"
     }
+    
+    enum Category: String, Codable {
+        case work, study, hobby, other
+        
+        var color: UIColor {
+            switch self {
+            case .work:
+                return .red
+            case .study:
+                return .blue
+            case .hobby:
+                return .green
+            case .other:
+                return .clear
+            }
+        }
+    }
+    
     let id: String
     var text: String
     var importance: Importance
@@ -14,6 +33,7 @@ struct Todoitem: Identifiable, Hashable {
     let dateCreated: Date
     let dateChanged: Date?
     var color: String?
+    var category: Category
     
     init(id: String = UUID().uuidString,
          text: String,
@@ -21,7 +41,9 @@ struct Todoitem: Identifiable, Hashable {
          deadline: Date? = nil,
          isDone: Bool,
          dateCreated: Date = Date(),
-         dateChanged: Date? = nil) {
+         dateChanged: Date? = nil,
+         category: Category = .other
+    ) {
         self.id = id
         self.text = text
         self.importance = importance
@@ -29,6 +51,7 @@ struct Todoitem: Identifiable, Hashable {
         self.isDone = isDone
         self.dateCreated = dateCreated
         self.dateChanged = dateChanged
+        self.category = category
     }
 }
 
