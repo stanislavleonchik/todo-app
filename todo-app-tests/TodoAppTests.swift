@@ -1,10 +1,3 @@
-//
-//  todo_appTests.swift
-//  todo-appTests
-//
-//  Created by Stanislav Leonchik on 18.06.2024.
-//
-
 import XCTest
 import todo_app
 

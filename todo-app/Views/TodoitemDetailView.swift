@@ -1,19 +1,12 @@
-//
-//  TodoitemDetailView.swift
-//  todo-app
-//
-//  Created by Stanislav Leonchik on 29.06.2024.
-//
-
 import SwiftUI
 
-
 struct TodoitemDetailView: View {
+    @EnvironmentObject var viewModel: ViewModel
     var item: Todoitem
     
     @Environment(\.dismiss) var dismiss
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
-    @EnvironmentObject var viewModel: ViewModel
+    
     @State private var localItem: Todoitem
     @State private var selectedIcon: Int
     @State private var isDeadlineSet: Bool
@@ -21,6 +14,7 @@ struct TodoitemDetailView: View {
     @State private var isEditingText = false
     @State private var selectedColor: Color = .white
     @State private var brightness: Double = 1.0
+    @State private var selectedCategory: TodoCategory
     private let importanceOptions: [Todoitem.Importance] = [.unimportant, .ordinary, .important]
     
     init(item: Todoitem) {
@@ -31,49 +25,55 @@ struct TodoitemDetailView: View {
         if let colorHex = item.color {
             self._selectedColor = State(initialValue: Color(colorHex))
         }
+        self._selectedCategory = State(initialValue: item.category)
     }
     
     var body: some View {
-        GeometryReader { geometry in
-            Form {
-                if horizontalSizeClass == .regular {
-                    HStack {
-                        textEditor
+        NavigationView {
+            GeometryReader { geometry in
+                Form {
+                    if horizontalSizeClass == .regular {
+                        HStack {
+                            textEditor
+                                .frame(width: geometry.size.width / 2)
+                            VStack {
+                                importanceRow
+                                categoryPicker
+                                colorPickerLink
+                                DeadlineView
+                                deadlinePicker
+                                Spacer()
+                            }
                             .frame(width: geometry.size.width / 2)
-                        VStack {
-                            importanceRow
-                            DeadlineView
-                            deadlinePicker
-                            colorPickerLink
-                            Spacer()
                         }
-                        .frame(width: geometry.size.width / 2)
-                    }
-                } else {
-                    textEditor
-                    Section {
-                        List {
-                            importanceRow
-                            DeadlineView
-                            deadlinePicker
-                            colorPickerLink
+                    } else {
+                        textEditor
+                        Section {
+                            List {
+                                importanceRow
+                                categoryPicker
+                                colorPickerLink
+                                DeadlineView
+                                deadlinePicker
+                            }
                         }
                     }
+                    deleteButton
                 }
-                deleteButton
-            }
-            .modifier(FormNavigationModifier(
-                saveAction: itemSave,
-                cancelAction: itemCancel
-            ))
-            .onAppear {
-                isDeadlineSet = localItem.deadline != nil
+                .modifier(FormNavigationModifier(
+                    saveAction: itemSave,
+                    cancelAction: itemCancel
+                ))
+                .onAppear {
+                    isDeadlineSet = localItem.deadline != nil
+                }
             }
         }
     }
     
     private func itemSave() {
         localItem.color = selectedColor.toHex()
+        localItem.category = selectedCategory
         viewModel.updateItem(item.id, localItem)
         dismiss()
     }
@@ -187,7 +187,7 @@ struct TodoitemDetailView: View {
                     .font(.custom("SF Pro Text", size: 13))
                     .fontWeight(.bold)
                     .foregroundStyle(.blue)
-                    .padding(.leading, -12)
+                    .padding(.leading, -10)
             }
         }
     }
@@ -207,8 +207,8 @@ struct TodoitemDetailView: View {
                     displayedComponents: [.date]
                 )
                 .datePickerStyle(.graphical)
-                .transition(.move(edge: .top)) // Add this line for transition
-                .animation(.easeInOut, value: isDatePickerVisible) // Add this line for animation
+                .transition(.move(edge: .top))
+                .animation(.easeInOut, value: isDatePickerVisible)
             }
         }
     }
@@ -227,6 +227,19 @@ struct TodoitemDetailView: View {
                 Spacer()
                 ColorSwatch(color: selectedColor)
             }
+        }
+    }
+    
+    var categoryPicker: some View {
+        HStack {
+            Text("Категория")
+            Spacer()
+            Picker("Категория", selection: $selectedCategory) {
+                ForEach(viewModel.categories) { category in
+                    Text(category.name).tag(category)
+                }
+            }
+            .pickerStyle(MenuPickerStyle())
         }
     }
 }

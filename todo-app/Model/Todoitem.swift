@@ -1,18 +1,24 @@
-//
-//  TodoItem.swift
-//  todo-app
-//
-//  Created by Stanislav Leonchik on 21.06.2024.
-//
-
 import Foundation
+import SwiftUI
 
-struct Todoitem: Identifiable, Hashable {
+struct TodoCategory: Identifiable, Equatable, Hashable {
+    let id = UUID()
+    var name: String
+    var color: UIColor
+    
+    static let work = TodoCategory(name: "Work", color: .red)
+    static let personal = TodoCategory(name: "Personal", color: .blue)
+    static let study = TodoCategory(name: "Study", color: .green)
+    static let other = TodoCategory(name: "Other", color: .clear)
+}
+
+struct Todoitem: Identifiable {
     enum Importance: String {
         case unimportant = "unimportant"
         case ordinary = "ordinary"
         case important = "important"
     }
+    
     let id: String
     var text: String
     var importance: Importance
@@ -20,7 +26,8 @@ struct Todoitem: Identifiable, Hashable {
     var isDone: Bool
     let dateCreated: Date
     let dateChanged: Date?
-    var color: String? = nil
+    var color: String?
+    var category: TodoCategory
     
     init(id: String = UUID().uuidString,
          text: String,
@@ -28,7 +35,8 @@ struct Todoitem: Identifiable, Hashable {
          deadline: Date? = nil,
          isDone: Bool,
          dateCreated: Date = Date(),
-         dateChanged: Date? = nil) {
+         dateChanged: Date? = nil,
+         category: TodoCategory = .other) {
         self.id = id
         self.text = text
         self.importance = importance
@@ -36,6 +44,7 @@ struct Todoitem: Identifiable, Hashable {
         self.isDone = isDone
         self.dateCreated = dateCreated
         self.dateChanged = dateChanged
+        self.category = category
     }
 }
 
