@@ -59,11 +59,13 @@ class CalendarViewController: UIViewController {
         tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         tableView.layoutMargins = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         
-        view.addSubview(tableView)    }
+        view.addSubview(tableView)
+    }
 
     private func setupAddButton() {
         let addButtonView = UIHostingController(rootView: AddButton(viewModel: viewModel))
         addButtonView.view.translatesAutoresizingMaskIntoConstraints = false
+        addButtonView.view.backgroundColor = .clear
         addChild(addButtonView)
         view.addSubview(addButtonView.view)
         addButtonView.didMove(toParent: self)
@@ -195,145 +197,6 @@ extension CalendarViewController: UITableViewDelegate, UITableViewDataSource {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         if let indexPath = tableView.indexPathsForVisibleRows?.first {
             updateCalendarSelection(for: indexPath)
-        }
-    }
-}
-
-
-class DateCell: UICollectionViewCell {
-    private let label = UILabel()
-    var item: Todoitem?
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        setupUI()
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    private func setupUI() {
-        contentView.addSubview(label)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.textAlignment = .center
-        NSLayoutConstraint.activate([
-            label.topAnchor.constraint(equalTo: contentView.topAnchor),
-            label.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            label.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            label.trailingAnchor.constraint(equalTo: contentView.trailingAnchor)
-        ])
-    }
-
-    func configure(with text: String, isSelected: Bool, item: Todoitem?) {
-        label.text = text
-        self.item = item
-        contentView.backgroundColor = isSelected ? .blue : .white
-        label.textColor = isSelected ? .white : .black
-        contentView.layer.cornerRadius = 8
-        contentView.layer.masksToBounds = true
-    }
-}
-
-class RoundedSectionHeaderView: UITableViewHeaderFooterView {
-    static let reuseIdentifier = "RoundedSectionHeaderView"
-    
-    private let backgroundContainerView: UIView = {
-        let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .white
-        view.layer.cornerRadius = 10
-        view.layer.masksToBounds = true
-        return view
-    }()
-    
-    private let titleLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.font = UIFont.boldSystemFont(ofSize: 16)
-        label.textColor = .black
-        return label
-    }()
-    
-    override init(reuseIdentifier: String?) {
-        super.init(reuseIdentifier: reuseIdentifier)
-        contentView.addSubview(backgroundContainerView)
-        backgroundContainerView.addSubview(titleLabel)
-        
-        NSLayoutConstraint.activate([
-            backgroundContainerView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
-            backgroundContainerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8),
-            backgroundContainerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            backgroundContainerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            
-            titleLabel.topAnchor.constraint(equalTo: backgroundContainerView.topAnchor, constant: 8),
-            titleLabel.bottomAnchor.constraint(equalTo: backgroundContainerView.bottomAnchor, constant: -8),
-            titleLabel.leadingAnchor.constraint(equalTo: backgroundContainerView.leadingAnchor, constant: 16),
-            titleLabel.trailingAnchor.constraint(equalTo: backgroundContainerView.trailingAnchor, constant: -16),
-        ])
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    func configure(with title: String) {
-        titleLabel.text = title
-    }
-}
-
-class TodoItemCell: UITableViewCell {
-    static let reuseIdentifier = "TodoItemCell"
-    
-    private let categoryDot = UIView()
-    
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        setupUI()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    private func setupUI() {
-        contentView.layer.cornerRadius = 10
-        contentView.layer.masksToBounds = true
-        contentView.layer.borderColor = UIColor.lightGray.cgColor
-        contentView.layer.borderWidth = 1
-        
-        categoryDot.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(categoryDot)
-        
-        NSLayoutConstraint.activate([
-            categoryDot.widthAnchor.constraint(equalToConstant: 10),
-            categoryDot.heightAnchor.constraint(equalToConstant: 10),
-            categoryDot.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            categoryDot.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
-        ])
-        
-        contentView.layoutMargins = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
-    }
-    
-    func configure(with item: Todoitem, isTop: Bool, isBottom: Bool) {
-        textLabel?.text = item.text
-        textLabel?.textColor = item.isDone ? .gray : .black
-        textLabel?.attributedText = item.isDone ? NSAttributedString(string: item.text, attributes: [.strikethroughStyle: NSUnderlineStyle.single.rawValue]) : NSAttributedString(string: item.text, attributes: [:])
-        
-        categoryDot.backgroundColor = item.category.color
-        categoryDot.layer.cornerRadius = 5
-        
-        if isTop && isBottom {
-            contentView.layer.cornerRadius = 10
-            contentView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
-        } else if isTop {
-            contentView.layer.cornerRadius = 10
-            contentView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        } else if isBottom {
-            contentView.layer.cornerRadius = 10
-            contentView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
-        } else {
-            contentView.layer.cornerRadius = 0
         }
     }
 }

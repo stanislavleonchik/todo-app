@@ -14,6 +14,7 @@ struct TodoitemDetailView: View {
     @State private var isEditingText = false
     @State private var selectedColor: Color = .white
     @State private var brightness: Double = 1.0
+    @State private var selectedCategory: TodoCategory
     private let importanceOptions: [Todoitem.Importance] = [.unimportant, .ordinary, .important]
     
     init(item: Todoitem) {
@@ -24,6 +25,7 @@ struct TodoitemDetailView: View {
         if let colorHex = item.color {
             self._selectedColor = State(initialValue: Color(colorHex))
         }
+        self._selectedCategory = State(initialValue: item.category)
     }
     
     var body: some View {
@@ -36,6 +38,7 @@ struct TodoitemDetailView: View {
                                 .frame(width: geometry.size.width / 2)
                             VStack {
                                 importanceRow
+                                categoryPicker
                                 colorPickerLink
                                 DeadlineView
                                 deadlinePicker
@@ -48,6 +51,7 @@ struct TodoitemDetailView: View {
                         Section {
                             List {
                                 importanceRow
+                                categoryPicker
                                 colorPickerLink
                                 DeadlineView
                                 deadlinePicker
@@ -69,6 +73,7 @@ struct TodoitemDetailView: View {
     
     private func itemSave() {
         localItem.color = selectedColor.toHex()
+        localItem.category = selectedCategory
         viewModel.updateItem(item.id, localItem)
         dismiss()
     }
@@ -222,6 +227,19 @@ struct TodoitemDetailView: View {
                 Spacer()
                 ColorSwatch(color: selectedColor)
             }
+        }
+    }
+    
+    var categoryPicker: some View {
+        HStack {
+            Text("Категория")
+            Spacer()
+            Picker("Категория", selection: $selectedCategory) {
+                ForEach(viewModel.categories) { category in
+                    Text(category.name).tag(category)
+                }
+            }
+            .pickerStyle(MenuPickerStyle())
         }
     }
 }

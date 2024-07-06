@@ -3,6 +3,7 @@ import SwiftUI
 
 final class ViewModel: ObservableObject {
     @Published var todoitems = FileCache()
+    @Published var categories: [TodoCategory] = []
     @Published var isShown: Bool = false
     @Published var sortOption: SortOption = .none
     
@@ -18,21 +19,19 @@ final class ViewModel: ObservableObject {
         Todoitem(text: "Купить сыр", importance: .unimportant, deadline: Date(timeIntervalSince1970: 10000), isDone: false),
         Todoitem(text: "Купить молоко", importance: .unimportant, deadline: Date(timeIntervalSince1970: 10000), isDone: false),
         Todoitem(text: "Купить йогурт", importance: .unimportant, deadline: Date(timeIntervalSince1970: 10000), isDone: false),
-        Todoitem(text: "Купить хлеб", importance: .unimportant, deadline: Date(timeIntervalSince1970: 500000), isDone: false),
-        Todoitem(text: "Купить макароны", importance: .unimportant, deadline: Date(timeIntervalSince1970: 500000), isDone: false),
-        Todoitem(text: "Купить фарш", importance: .unimportant, deadline: Date(timeIntervalSince1970: 500000), isDone: false),
-        Todoitem(text: "Купить фарш", importance: .unimportant, deadline: Date(timeIntervalSince1970: 50000000), isDone: false),
-        Todoitem(text: "Купить фарш", importance: .unimportant, deadline: Date(timeIntervalSince1970: 50000000), isDone: false),
-        Todoitem(text: "Купить фарш", importance: .unimportant, deadline: Date(timeIntervalSince1970: 50000000), isDone: false),
-        Todoitem(text: "Купить фарш", importance: .unimportant, deadline: Date(timeIntervalSince1970: 150000000), isDone: false),
-        Todoitem(text: "Купить фарш", importance: .unimportant, deadline: Date(timeIntervalSince1970: 150000000), isDone: false),
-        Todoitem(text: "Купить фарш", importance: .unimportant, deadline: Date(timeIntervalSince1970: 150000000), isDone: false),
-        Todoitem(text: "Купить фарш", importance: .unimportant, deadline: Date(timeIntervalSince1970: 1150000000), isDone: false),
-        Todoitem(text: "Купить фарш", importance: .unimportant, deadline: Date(timeIntervalSince1970: 1150000000), isDone: false),
-        Todoitem(text: "Купить фарш", importance: .unimportant, deadline: Date(timeIntervalSince1970: 1150000000), isDone: false),
+        Todoitem(text: "Купить фарш", importance: .unimportant, deadline: Date(timeIntervalSince1970: 150000000), isDone: false, category: .study),
+        Todoitem(text: "Купить фарш", importance: .unimportant, deadline: Date(timeIntervalSince1970: 150000000), isDone: false, category: .study),
+        Todoitem(text: "Купить фарш", importance: .unimportant, deadline: Date(timeIntervalSince1970: 1150000000), isDone: false, category: .study),
+        Todoitem(text: "Купить фарш", importance: .unimportant, deadline: Date(timeIntervalSince1970: 1150000000), isDone: false, category: .study),
+        Todoitem(text: "Купить фарш", importance: .unimportant, deadline: Date(timeIntervalSince1970: 1150000000), isDone: false, category: .study),
     ]
     
     init() {
+        categories = [
+                    TodoCategory(name: "Work", color: .red),
+                    TodoCategory(name: "Personal", color: .blue),
+                    TodoCategory(name: "Study", color: .green)
+                ]
         for i in data {
             todoitems[i.id] = i
         }
@@ -109,32 +108,45 @@ final class ViewModel: ObservableObject {
     struct Section {
             let title: String
             var items: [Todoitem]
+    }
+    
+    var sections: [Section] {
+        let groupedItems = Dictionary(grouping: filteredSortedItems) { (item: Todoitem) -> String in
+            if let date = item.deadline {
+                return DateFormatter.localizedString(from: date, dateStyle: .medium, timeStyle: .none)
+            } else {
+                return "Other"
+            }
         }
         
-        var sections: [Section] {
-            let groupedItems = Dictionary(grouping: filteredSortedItems) { (item: Todoitem) -> String in
-                if let date = item.deadline {
-                    return DateFormatter.localizedString(from: date, dateStyle: .medium, timeStyle: .none)
-                } else {
-                    return "Other"
-                }
+        let sortedKeys = groupedItems.keys.sorted {
+            if $0 == "Other" {
+                return false
             }
-            
-            let sortedKeys = groupedItems.keys.sorted {
-                if $0 == "Other" {
-                    return false
-                }
-                if $1 == "Other" {
-                    return true
-                }
-                let dateFormatter = DateFormatter()
-                dateFormatter.dateStyle = .medium
-                guard let date1 = dateFormatter.date(from: $0), let date2 = dateFormatter.date(from: $1) else {
-                    return false
-                }
-                return date1 < date2
+            if $1 == "Other" {
+                return true
             }
-            
-            return sortedKeys.map { Section(title: $0, items: groupedItems[$0] ?? []) }
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateStyle = .medium
+            guard let date1 = dateFormatter.date(from: $0), let date2 = dateFormatter.date(from: $1) else {
+                return false
+            }
+            return date1 < date2
         }
+        
+        return sortedKeys.map { Section(title: $0, items: groupedItems[$0] ?? []) }
+    }
+    func addCategory(_ category: TodoCategory) {
+           categories.append(category)
+       }
+
+       func removeCategory(_ category: TodoCategory) {
+           categories.removeAll { $0.id == category.id }
+       }
+
+       func updateCategory(_ category: TodoCategory) {
+           if let index = categories.firstIndex(where: { $0.id == category.id }) {
+               categories[index] = category
+           }
+       }
 }
