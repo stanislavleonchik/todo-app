@@ -93,8 +93,10 @@ class CalendarViewController: UIViewController {
     }
 
     private func scrollToSection(for date: Date) {
-        if let sectionIndex = viewModel.sections.firstIndex(where: { section in
-            if let sectionDate = dateFormatter.date(from: section.title), Calendar.current.isDate(sectionDate, inSameDayAs: date) {
+        if let sectionIndex = viewModel.sections.firstIndex(where: {
+            section in
+            if let sectionDate = dateFormatter.date(from: section.title),
+               Calendar.current.isDate(sectionDate, inSameDayAs: date) {
                 return true
             }
             return false
@@ -122,7 +124,11 @@ extension CalendarViewController: UICollectionViewDelegate, UICollectionViewData
         let section = viewModel.sections[indexPath.item]
         if let date = dateFormatter.date(from: section.title) {
             let item = viewModel.sections[indexPath.item].items.first
-            cell.configure(with: section.title, isSelected: Calendar.current.isDate(date, inSameDayAs: selectedDate ?? Date()), item: item)
+            cell.configure(
+                with: section.title,
+                isSelected: Calendar.current.isDate(date, inSameDayAs: selectedDate ?? Date()),
+                item: item
+            )
         }
         return cell
     }
