@@ -1,4 +1,5 @@
 import UIKit
+import FileCacheUnit
 
 class DateCell: UICollectionViewCell {
     private let label = UILabel()

@@ -1,4 +1,5 @@
 import SwiftUI
+import FileCacheUnit
 
 struct ManageCategoriesView: View {
     @EnvironmentObject var viewModel: ViewModel

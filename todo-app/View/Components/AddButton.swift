@@ -1,4 +1,5 @@
 import SwiftUI
+import FileCacheUnit
 
 struct AddButton: View {
     @ObservedObject var viewModel: ViewModel
