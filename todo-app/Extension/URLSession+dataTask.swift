@@ -1,4 +1,5 @@
 import Foundation
+import CocoaLumberjackSwift
 
 extension URLSession {
     func dataTask(for urlRequest: URLRequest) async throws -> (Data, URLResponse) {
@@ -14,6 +15,7 @@ extension URLSession {
                     }
                     
                     if let error {
+                        DDLogDebug("Error in dataTask: \(error.localizedDescription)")
                         contination.resume(throwing: error)
                         return
                     }

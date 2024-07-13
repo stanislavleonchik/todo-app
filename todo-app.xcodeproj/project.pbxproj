@@ -29,6 +29,7 @@
 		CB6D27762C3B3A6C00ECC142 /* CocoaLumberjackSwiftLogBackend in Frameworks */ = {isa = PBXBuildFile; productRef = CB6D27752C3B3A6C00ECC142 /* CocoaLumberjackSwiftLogBackend */; };
 		CB7248962C420AC8007CC870 /* FileCacheUnit in Frameworks */ = {isa = PBXBuildFile; productRef = CB7248952C420AC8007CC870 /* FileCacheUnit */; };
 		CB7248992C420BD0007CC870 /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = CB7248982C420BD0007CC870 /* .swiftlint.yml */; };
+		CB85728E2C420DEB00D8C827 /* URLSession+dataTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB85728C2C420DEB00D8C827 /* URLSession+dataTask.swift */; };
 		CB88D2782C2FAE2800713495 /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB88D2772C2FAE2800713495 /* ViewModel.swift */; };
 		CB88D2792C2FAE2800713495 /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB88D2772C2FAE2800713495 /* ViewModel.swift */; };
 		CB88D27B2C2FAE5400713495 /* TodoitemDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB88D27A2C2FAE5400713495 /* TodoitemDetailView.swift */; };
@@ -72,6 +73,7 @@
 		CB6D276C2C38D6E300ECC142 /* ManageCategoriesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageCategoriesView.swift; sourceTree = "<group>"; };
 		CB6D276E2C38DD1100ECC142 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		CB7248982C420BD0007CC870 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
+		CB85728C2C420DEB00D8C827 /* URLSession+dataTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URLSession+dataTask.swift"; sourceTree = "<group>"; };
 		CB88D2772C2FAE2800713495 /* ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
 		CB88D27A2C2FAE5400713495 /* TodoitemDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoitemDetailView.swift; sourceTree = "<group>"; };
 		CB88D27D2C2FAE7C00713495 /* ColorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorView.swift; sourceTree = "<group>"; };
@@ -146,6 +148,7 @@
 		CB3D718E2C20E02700E06F40 /* todo-app */ = {
 			isa = PBXGroup;
 			children = (
+				CB85728D2C420DEB00D8C827 /* Extension */,
 				CB3D718F2C20E02700E06F40 /* TodoApp.swift */,
 				CB6F3D182C40696000703E6D /* ViewModel */,
 				CB88D2832C2FAEFE00713495 /* View */,
@@ -220,6 +223,14 @@
 				CB3D71932C20E02800E06F40 /* Assets.xcassets */,
 			);
 			path = Resource;
+			sourceTree = "<group>";
+		};
+		CB85728D2C420DEB00D8C827 /* Extension */ = {
+			isa = PBXGroup;
+			children = (
+				CB85728C2C420DEB00D8C827 /* URLSession+dataTask.swift */,
+			);
+			path = Extension;
 			sourceTree = "<group>";
 		};
 		CB88D2832C2FAEFE00713495 /* View */ = {
@@ -414,6 +425,7 @@
 				CB88D2782C2FAE2800713495 /* ViewModel.swift in Sources */,
 				CB6D275F2C389FDD00ECC142 /* CalendarViewControllerWrapper.swift in Sources */,
 				CB6D276F2C38DD1100ECC142 /* SettingsView.swift in Sources */,
+				CB85728E2C420DEB00D8C827 /* URLSession+dataTask.swift in Sources */,
 				CB6D276D2C38D6E300ECC142 /* ManageCategoriesView.swift in Sources */,
 				CB3D71922C20E02700E06F40 /* TodoView.swift in Sources */,
 				CB88D27E2C2FAE7C00713495 /* ColorView.swift in Sources */,

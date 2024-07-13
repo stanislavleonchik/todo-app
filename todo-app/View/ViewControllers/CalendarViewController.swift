@@ -1,6 +1,7 @@
 import UIKit
 import SwiftUI
 import FileCacheUnit
+import CocoaLumberjackSwift
 
 protocol CalendarViewControllerDelegate: AnyObject {
     func didSelectTodoItem(_ item: Todoitem)
@@ -21,6 +22,7 @@ class CalendarViewController: UIViewController {
     }
 
     override func viewDidLoad() {
+        DDLogDebug("Calendar view controller created")
         super.viewDidLoad()
         setupUI()
     }
