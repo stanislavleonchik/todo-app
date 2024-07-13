@@ -28,6 +28,7 @@
 		CB6D27742C3B3A6C00ECC142 /* CocoaLumberjackSwift in Frameworks */ = {isa = PBXBuildFile; productRef = CB6D27732C3B3A6C00ECC142 /* CocoaLumberjackSwift */; };
 		CB6D27762C3B3A6C00ECC142 /* CocoaLumberjackSwiftLogBackend in Frameworks */ = {isa = PBXBuildFile; productRef = CB6D27752C3B3A6C00ECC142 /* CocoaLumberjackSwiftLogBackend */; };
 		CB7248962C420AC8007CC870 /* FileCacheUnit in Frameworks */ = {isa = PBXBuildFile; productRef = CB7248952C420AC8007CC870 /* FileCacheUnit */; };
+		CB7248992C420BD0007CC870 /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = CB7248982C420BD0007CC870 /* .swiftlint.yml */; };
 		CB88D2782C2FAE2800713495 /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB88D2772C2FAE2800713495 /* ViewModel.swift */; };
 		CB88D2792C2FAE2800713495 /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB88D2772C2FAE2800713495 /* ViewModel.swift */; };
 		CB88D27B2C2FAE5400713495 /* TodoitemDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB88D27A2C2FAE5400713495 /* TodoitemDetailView.swift */; };
@@ -70,6 +71,7 @@
 		CB6D276A2C38D0C000ECC142 /* DateCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateCell.swift; sourceTree = "<group>"; };
 		CB6D276C2C38D6E300ECC142 /* ManageCategoriesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManageCategoriesView.swift; sourceTree = "<group>"; };
 		CB6D276E2C38DD1100ECC142 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		CB7248982C420BD0007CC870 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		CB88D2772C2FAE2800713495 /* ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
 		CB88D27A2C2FAE5400713495 /* TodoitemDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoitemDetailView.swift; sourceTree = "<group>"; };
 		CB88D27D2C2FAE7C00713495 /* ColorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorView.swift; sourceTree = "<group>"; };
@@ -123,6 +125,7 @@
 		CB3D71832C20E02700E06F40 = {
 			isa = PBXGroup;
 			children = (
+				CB7248982C420BD0007CC870 /* .swiftlint.yml */,
 				CB3D718E2C20E02700E06F40 /* todo-app */,
 				CB3D719F2C20E02800E06F40 /* todo-app-tests */,
 				CB3D718D2C20E02700E06F40 /* Products */,
@@ -323,6 +326,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CB7248992C420BD0007CC870 /* .swiftlint.yml in Resources */,
 				CB3D71972C20E02800E06F40 /* Preview Assets.xcassets in Resources */,
 				CB3D71942C20E02800E06F40 /* Assets.xcassets in Resources */,
 			);
