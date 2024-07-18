@@ -1,25 +1,14 @@
-# .swiftlint.yml
+disabled_rules:
+  - trailing_whitespace
+  - file_length
 
-# Paths to include (optional)
+opt_in_rules:
+  - empty_count
+
 included:
-  - Sources
-  - Tests
+  - Source
 
-# Paths to exclude (optional)
 excluded:
   - Pods
   - Carthage
-  - Build
-
-# Disabled rules (optional)
-disabled_rules:
-  - line_length
-
-# Custom rules (optional)
-custom_rules:
-  my_custom_rule:
-    included: ".*.swift"
-    name: "My custom rule"
-    regex: '.*'
-    message: "This is a custom rule"
-    severity: warning
+  - fastlane
