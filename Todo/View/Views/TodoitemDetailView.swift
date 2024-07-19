@@ -16,7 +16,7 @@ struct TodoitemDetailView: View {
     @State private var selectedColor: Color = .white
     @State private var brightness: Double = 1.0
     @State private var selectedCategory: TodoCategory
-    private let importanceOptions: [Todoitem.Importance] = [.unimportant, .ordinary, .important]
+    private let importanceOptions: [Todoitem.Importance] = [.low, .basic, .important]
     
     init(item: Todoitem) {
         self.item = item

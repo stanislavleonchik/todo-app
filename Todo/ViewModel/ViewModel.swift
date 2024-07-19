@@ -3,7 +3,7 @@ import FileCacheUnit
 
 
 final class ViewModel: ObservableObject {
-    @Published var todoitems = FileCache()
+    @Published var todoitems = FileCache<Todoitem>()
     @Published var categories: [TodoCategory] = []
     @Published var isShown: Bool = false
     @Published var sortOption: SortOption = .none
@@ -15,16 +15,16 @@ final class ViewModel: ObservableObject {
         Todoitem(text: "Купить что-то, где-то, зачем-то, но зачем не очень понятно, но точно чтобы показать как обреза…", importance: .important, isDone: false),
         Todoitem(text: "Купить что-то, где-то, зачем-то, но зачем не очень понятно, но точно чтобы показать как обреза…", isDone: false),
         Todoitem(text: "Купить что-то, где-то, зачем-то, но зачем не очень понятно, но точно чтобы показать как обреза…", deadline: Date(), isDone: false),
-        Todoitem(text: "Hello\nabacaba\nabacaba\nabacaba", importance: .unimportant, isDone: false),
-        Todoitem(text: "Купить бобы", importance: .unimportant, deadline: Date(), isDone: false),
-        Todoitem(text: "Купить сыр", importance: .unimportant, deadline: Date(timeIntervalSince1970: 10000), isDone: false),
-        Todoitem(text: "Купить молоко", importance: .unimportant, deadline: Date(timeIntervalSince1970: 10000), isDone: false),
-        Todoitem(text: "Купить йогурт", importance: .unimportant, deadline: Date(timeIntervalSince1970: 10000), isDone: false),
-        Todoitem(text: "Купить фарш", importance: .unimportant, deadline: Date(timeIntervalSince1970: 150000000), isDone: false, category: .study),
-        Todoitem(text: "Купить фарш", importance: .unimportant, deadline: Date(timeIntervalSince1970: 150000000), isDone: false, category: .study),
-        Todoitem(text: "Купить фарш", importance: .unimportant, deadline: Date(timeIntervalSince1970: 1150000000), isDone: false, category: .study),
-        Todoitem(text: "Купить фарш", importance: .unimportant, deadline: Date(timeIntervalSince1970: 1150000000), isDone: false, category: .study),
-        Todoitem(text: "Купить фарш", importance: .unimportant, deadline: Date(timeIntervalSince1970: 1150000000), isDone: false, category: .study),
+        Todoitem(text: "Hello\nabacaba\nabacaba\nabacaba", importance: .low, isDone: false),
+        Todoitem(text: "Купить бобы", importance: .low, deadline: Date(), isDone: false),
+        Todoitem(text: "Купить сыр", importance: .low, deadline: Date(timeIntervalSince1970: 10000), isDone: false),
+        Todoitem(text: "Купить молоко", importance: .low, deadline: Date(timeIntervalSince1970: 10000), isDone: false),
+        Todoitem(text: "Купить йогурт", importance: .low, deadline: Date(timeIntervalSince1970: 10000), isDone: false),
+        Todoitem(text: "Купить фарш", importance: .low, deadline: Date(timeIntervalSince1970: 150000000), isDone: false, category: .study),
+        Todoitem(text: "Купить фарш", importance: .low, deadline: Date(timeIntervalSince1970: 150000000), isDone: false, category: .study),
+        Todoitem(text: "Купить фарш", importance: .low, deadline: Date(timeIntervalSince1970: 1150000000), isDone: false, category: .study),
+        Todoitem(text: "Купить фарш", importance: .low, deadline: Date(timeIntervalSince1970: 1150000000), isDone: false, category: .study),
+        Todoitem(text: "Купить фарш", importance: .low, deadline: Date(timeIntervalSince1970: 1150000000), isDone: false, category: .study),
     ]
     
     init() {
