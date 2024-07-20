@@ -13,7 +13,7 @@ struct ManageCategoriesView: View {
                     TextField("Название категории", text: $newCategoryName)
                     ColorPicker("Цвет категории", selection: $selectedColor)
                     Button("Добавить") {
-                        let newCategory = TodoCategory(name: newCategoryName, color: UIColor(selectedColor))
+                        let newCategory = TodoCategory(name: newCategoryName, color: selectedColor)
                         viewModel.addCategory(newCategory)
                         newCategoryName = ""
                         selectedColor = .white

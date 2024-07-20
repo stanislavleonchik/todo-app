@@ -9,7 +9,6 @@ struct AddButton: View {
     var body: some View {
         Button(action: {
             let newItem = Todoitem(text: "", isDone: false)
-            viewModel.addItem(newItem)
             self.newItem = newItem
             showModal = true
         }) {
@@ -24,7 +23,7 @@ struct AddButton: View {
         }
         .sheet(isPresented: $showModal) {
             if let newItem = newItem {
-                TodoitemDetailView(item: newItem).environmentObject(viewModel)
+                TodoitemDetailView(item: newItem, isNew: true).environmentObject(viewModel)
             }
         }
     }

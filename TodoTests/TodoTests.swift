@@ -1,10 +1,9 @@
 import XCTest
-import Todo
 
 final class todo_appTests: XCTestCase {
     func test_json_serialization() {
         let dateCreated = Date()
-        let item = Todoitem(id: "1", text: "Test Task", importance: .important, deadline: Date(timeIntervalSince1970: 0), isDone: false, dateCreated: dateCreated, dateChanged: nil)
+        let item = Todoitem(id: "1", text: "Test Task", importance: Todoitem.Importance.important, deadline: Date(timeIntervalSince1970: 0), isDone: false, dateCreated: dateCreated)
 
         let json = item.json as? [String: Any]
 
@@ -25,7 +24,7 @@ final class todo_appTests: XCTestCase {
         let json: [String: Any] = [
             "id": "2",
             "text": "Another Task",
-            "importance": Todoitem.Importance.ordinary.rawValue,
+            "importance": Todoitem.Importance.basic.rawValue,
             "isDone": true,
             "dateCreated": Date().timeIntervalSince1970
         ]
@@ -34,7 +33,7 @@ final class todo_appTests: XCTestCase {
 
         XCTAssertEqual(item.id, "2")
         XCTAssertEqual(item.text, "Another Task")
-        XCTAssertEqual(item.importance, Todoitem.Importance.ordinary)
+        XCTAssertEqual(item.importance, Todoitem.Importance.basic)
         XCTAssertEqual(item.isDone, true)
         XCTAssertEqual(item.dateCreated.timeIntervalSince1970, json["dateCreated"] as? TimeInterval)
 

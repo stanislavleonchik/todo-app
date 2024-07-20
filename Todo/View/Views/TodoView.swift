@@ -25,6 +25,10 @@ struct TodoView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     HStack {
+                        if viewModel.isNetworkBusy {
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle())
+                        }
                         Button(action: {
                             showCalendar = true
                         }) {

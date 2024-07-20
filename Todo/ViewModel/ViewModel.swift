@@ -1,83 +1,93 @@
-import SwiftUI
 import FileCacheUnit
+import Foundation
+import Combine
+import SwiftUI
 
-
+@MainActor
 final class ViewModel: ObservableObject {
-    @Published var todoitems = FileCache()
+    @Published var todoitems = FileCache<Todoitem>()
     @Published var categories: [TodoCategory] = []
     @Published var isShown: Bool = false
     @Published var sortOption: SortOption = .none
-    
-    var data = [
-        Todoitem(text: "Hello", isDone: true),
-        Todoitem(text: "Hello", isDone: false),
-        Todoitem(text: "Hello", importance: .important, isDone: true),
-        Todoitem(text: "Купить что-то, где-то, зачем-то, но зачем не очень понятно, но точно чтобы показать как обреза…", importance: .important, isDone: false),
-        Todoitem(text: "Купить что-то, где-то, зачем-то, но зачем не очень понятно, но точно чтобы показать как обреза…", isDone: false),
-        Todoitem(text: "Купить что-то, где-то, зачем-то, но зачем не очень понятно, но точно чтобы показать как обреза…", deadline: Date(), isDone: false),
-        Todoitem(text: "Hello\nabacaba\nabacaba\nabacaba", importance: .unimportant, isDone: false),
-        Todoitem(text: "Купить бобы", importance: .unimportant, deadline: Date(), isDone: false),
-        Todoitem(text: "Купить сыр", importance: .unimportant, deadline: Date(timeIntervalSince1970: 10000), isDone: false),
-        Todoitem(text: "Купить молоко", importance: .unimportant, deadline: Date(timeIntervalSince1970: 10000), isDone: false),
-        Todoitem(text: "Купить йогурт", importance: .unimportant, deadline: Date(timeIntervalSince1970: 10000), isDone: false),
-        Todoitem(text: "Купить фарш", importance: .unimportant, deadline: Date(timeIntervalSince1970: 150000000), isDone: false, category: .study),
-        Todoitem(text: "Купить фарш", importance: .unimportant, deadline: Date(timeIntervalSince1970: 150000000), isDone: false, category: .study),
-        Todoitem(text: "Купить фарш", importance: .unimportant, deadline: Date(timeIntervalSince1970: 1150000000), isDone: false, category: .study),
-        Todoitem(text: "Купить фарш", importance: .unimportant, deadline: Date(timeIntervalSince1970: 1150000000), isDone: false, category: .study),
-        Todoitem(text: "Купить фарш", importance: .unimportant, deadline: Date(timeIntervalSince1970: 1150000000), isDone: false, category: .study),
-    ]
-    
-    init() {
-        categories = [
-                    TodoCategory(name: "Work", color: .red),
-                    TodoCategory(name: "Personal", color: .blue),
-                    TodoCategory(name: "Study", color: .green)
-                ]
-        for i in data {
-            todoitems[i.id] = i
-        }
+    @Published var filteredSortedItems: [Todoitem] = []
+    @Published var isNetworkBusy: Bool = false
+
+    private let networkingService: NetworkingService
+    private var cancellables: Set<AnyCancellable> = []
+
+    init(networkingService: NetworkingService = DefaultNetworkingService()) {
+        self.networkingService = networkingService
+        self.categories = [
+            .work, .personal, .study, .other
+        ]
+        loadData()
         updateFilteredSortedItems()
     }
-    
+
     var items: [Todoitem] {
         todoitems.items
     }
-    
-    @Published  var filteredSortedItems: [Todoitem] = []
-    
+
+    private func loadData() {
+        Task {
+            isNetworkBusy = true
+            defer { isNetworkBusy = false }
+            do {
+                let dtos = try await networkingService.fetchTodoList()
+                let items = dtos.compactMap { Todoitem(dto: $0) }
+                for item in items {
+                    self.todoitems.addItem(item)
+                }
+                self.todoitems.revision = try await networkingService.fetchRevision()
+                self.updateFilteredSortedItems()
+            } catch {
+                handleError(error)
+            }
+        }
+    }
+
     func toggleItem(_ id: String) {
-        todoitems[id]?.isDone.toggle()
-        updateFilteredSortedItems()
+        if let item = self.todoitems[id] {
+            let newItem = item.copyWith(isDone: !item.isDone)
+            self.updateItem(id, newItem)
+        }
     }
-    
+
     func completeItem(_ id: String) {
-        todoitems[id]?.isDone = true
-        updateFilteredSortedItems()
+        if let item = self.todoitems[id] {
+            let newItem = item.copyWith(isDone: true)
+            self.updateItem(id, newItem)
+        }
     }
-    
+
     func activateItem(_ id: String) {
-        todoitems[id]?.isDone = false
-        updateFilteredSortedItems()
+        if let item = self.todoitems[id] {
+            let newItem = item.copyWith(isDone: false)
+            self.updateItem(id, newItem)
+        }
     }
-    
+
     func addItem(_ item: Todoitem) {
-        todoitems[item.id] = item
-        updateFilteredSortedItems()
+        self.todoitems[item.id] = item
+        self.updateFilteredSortedItems()
+        self.syncWithServer()
     }
-    
+
     func removeItem(_ id: String) {
-        todoitems[id] = nil
-        updateFilteredSortedItems()
+        self.todoitems[id] = nil
+        self.updateFilteredSortedItems()
+        self.syncWithServer()
     }
-    
+
     func updateItem(_ id: String, _ item: Todoitem) {
-        todoitems[id] = item
-        updateFilteredSortedItems()
+        self.todoitems[id] = item
+        self.updateFilteredSortedItems()
+        self.syncWithServer()
     }
-    
-    func updateFilteredSortedItems() {
-        var filteredItems = isShown ? items.filter { !$0.isDone } : items
-        switch sortOption {
+
+    private func updateFilteredSortedItems() {
+        var filteredItems = self.isShown ? self.items.filter { !$0.isDone } : self.items
+        switch self.sortOption {
         case .none:
             break
         case .addition:
@@ -85,32 +95,77 @@ final class ViewModel: ObservableObject {
         case .importance:
             filteredItems.sort { $0.importance.rawValue > $1.importance.rawValue }
         }
-        filteredSortedItems = filteredItems
+        self.filteredSortedItems = filteredItems
     }
-    
+
     func toggleShowCompleted() {
-        isShown.toggle()
+        self.isShown.toggle()
         updateFilteredSortedItems()
     }
-    
+
     func sortBy(_ option: SortOption) {
-        sortOption = option
+        self.sortOption = option
         updateFilteredSortedItems()
     }
-    
-    var completedCount: Int {
-        return items.filter { $0.isDone }.count
+
+    func validateTodoitemDTO(_ dto: TodoitemDTO) -> Bool {
+        guard !dto.id.isEmpty, !dto.text.isEmpty, !dto.importance.isEmpty, !dto.last_updated_by.isEmpty else {
+            return false
+        }
+        return true
     }
-    
+
+    private func syncWithServer() {
+        isNetworkBusy = true
+        Task {
+            defer { isNetworkBusy = false }
+            do {
+                let dtos = todoitems.items.map { $0.toDTO() }.filter { validateTodoitemDTO($0) }
+                guard !dtos.isEmpty else {
+                    throw URLError(.badURL, userInfo: [NSLocalizedDescriptionKey: "Invalid data in DTOs"])
+                }
+                let updatedItems = try await networkingService.updateTodoList(with: dtos, revision: todoitems.revision)
+                let items = updatedItems.compactMap { Todoitem(dto: $0) }
+                for item in items {
+                    self.todoitems.addItem(item)
+                }
+                self.todoitems.revision = try await networkingService.fetchRevision()
+                self.updateFilteredSortedItems()
+                self.isNetworkBusy = false
+                print("Sync with server successful")
+            } catch {
+                handleError(error)
+                self.isNetworkBusy = false
+                print("Sync with server failed: \(error.localizedDescription)")
+            }
+        }
+    }
+
+    private func handleError(_ error: Error) {
+        print("Error: \(error.localizedDescription)")
+        if let urlError = error as? URLError {
+            switch urlError.code {
+            case .badServerResponse:
+                print("Bad server response")
+            case .timedOut:
+                print("Request timed out")
+            case .networkConnectionLost:
+                print("Network connection lost")
+            default:
+                print("Other URL error: \(urlError.code)")
+            }
+        }
+    }
+
     enum SortOption {
         case none, addition, importance
     }
-    
+
     struct Section {
-            let title: String
-            var items: [Todoitem]
+        let title: String
+        var items: [Todoitem]
     }
-    
+
     var sections: [Section] {
         let groupedItems = Dictionary(grouping: filteredSortedItems) { (item: Todoitem) -> String in
             if let date = item.deadline {
@@ -134,20 +189,25 @@ final class ViewModel: ObservableObject {
             }
             return date1 < date2
         }
-        
+
         return sortedKeys.map { Section(title: $0, items: groupedItems[$0] ?? []) }
     }
+
     func addCategory(_ category: TodoCategory) {
-           categories.append(category)
-       }
+        self.categories.append(category)
+    }
 
-       func removeCategory(_ category: TodoCategory) {
-           categories.removeAll { $0.id == category.id }
-       }
+    func removeCategory(_ category: TodoCategory) {
+        self.categories.removeAll { $0.id == category.id }
+    }
 
-       func updateCategory(_ category: TodoCategory) {
-           if let index = categories.firstIndex(where: { $0.id == category.id }) {
-               categories[index] = category
-           }
-       }
+    func updateCategory(_ category: TodoCategory) {
+        if let index = self.categories.firstIndex(where: { $0.id == category.id }) {
+            self.categories[index] = category
+        }
+    }
+
+    var completedCount: Int {
+        return items.filter { $0.isDone }.count
+    }
 }
