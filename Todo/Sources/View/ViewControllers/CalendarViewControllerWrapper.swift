@@ -2,7 +2,7 @@ import SwiftUI
 import FileCacheUnit
 
 struct CalendarViewControllerWrapper: UIViewControllerRepresentable {
-    @EnvironmentObject var viewModel: ViewModel
+    @EnvironmentObject var viewModel: ListTodoitemsViewModel
     @Binding var selectedItem: Todoitem?
     @Binding var showModal: Bool
 

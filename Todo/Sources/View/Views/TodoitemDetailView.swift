@@ -2,8 +2,9 @@ import SwiftUI
 import FileCacheUnit
 
 struct TodoitemDetailView: View {
-    @EnvironmentObject var viewModel: ViewModel
+    @EnvironmentObject var viewModel: ListTodoitemsViewModel
     var item: Todoitem
+    var isNew: Bool = false
     
     @Environment(\.dismiss) var dismiss
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
@@ -16,15 +17,16 @@ struct TodoitemDetailView: View {
     @State private var selectedColor: Color = .white
     @State private var brightness: Double = 1.0
     @State private var selectedCategory: TodoCategory
-    private let importanceOptions: [Todoitem.Importance] = [.unimportant, .ordinary, .important]
+    private let importanceOptions: [Todoitem.Importance] = [.low, .basic, .important]
     
-    init(item: Todoitem) {
+    init(item: Todoitem, isNew: Bool = false) {
         self.item = item
+        self.isNew = isNew
         self._localItem = State(initialValue: item)
         self._selectedIcon = State(initialValue: importanceOptions.firstIndex(where: { $0 == item.importance }) ?? 1)
         self._isDeadlineSet = State(initialValue: item.deadline != nil)
         if let colorHex = item.color {
-            self._selectedColor = State(initialValue: Color(colorHex))
+            self._selectedColor = State(initialValue: Color(hex: colorHex) ?? .clear)
         }
         self._selectedCategory = State(initialValue: item.category)
     }
@@ -59,7 +61,9 @@ struct TodoitemDetailView: View {
                             }
                         }
                     }
-                    deleteButton
+                    if !isNew {
+                        deleteButton
+                    }
                 }
                 .modifier(FormNavigationModifier(
                     saveAction: itemSave,
@@ -75,7 +79,12 @@ struct TodoitemDetailView: View {
     private func itemSave() {
         localItem.color = selectedColor.toHex()
         localItem.category = selectedCategory
-        viewModel.updateItem(item.id, localItem)
+        if isNew {
+            viewModel.addItem(localItem)
+        } else {
+            viewModel.updateItem(item.id, localItem)
+        }
+        viewModel.syncWithServer()
         dismiss()
     }
     
@@ -87,6 +96,7 @@ struct TodoitemDetailView: View {
         Section {
             Button("Удалить") {
                 viewModel.removeItem(item.id)
+                viewModel.syncWithServer()
                 dismiss()
             }
             .foregroundStyle(Color("ColorRed"))

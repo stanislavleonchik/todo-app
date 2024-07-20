@@ -2,7 +2,7 @@ import SwiftUI
 import FileCacheUnit
 
 struct TodoView: View {
-    @EnvironmentObject var viewModel: ViewModel
+    @EnvironmentObject var viewModel: ListTodoitemsViewModel
     
     @State private var showModal = false
     @State private var showCalendar = false
@@ -25,6 +25,10 @@ struct TodoView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     HStack {
+                        if viewModel.isNetworkBusy {
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle())
+                        }
                         Button(action: {
                             showCalendar = true
                         }) {

@@ -1,10 +1,11 @@
 import SwiftUI
-import FileCacheUnit
 
 struct ManageCategoriesView: View {
-    @EnvironmentObject var viewModel: ViewModel
+    @EnvironmentObject var viewModel: ListTodoitemsViewModel
     @State private var newCategoryName: String = ""
     @State private var selectedColor: Color = .white
+    @State private var showError: Bool = false
+    @State private var errorMessage: String = ""
     
     var body: some View {
         NavigationView {
@@ -13,10 +14,14 @@ struct ManageCategoriesView: View {
                     TextField("Название категории", text: $newCategoryName)
                     ColorPicker("Цвет категории", selection: $selectedColor)
                     Button("Добавить") {
-                        let newCategory = TodoCategory(name: newCategoryName, color: UIColor(selectedColor))
-                        viewModel.addCategory(newCategory)
-                        newCategoryName = ""
-                        selectedColor = .white
+                        let newCategory = TodoCategory(name: newCategoryName, color: selectedColor)
+                        if !viewModel.addCategory(newCategory) {
+                            errorMessage = "Категория не может быть с пустым названием или с дублирующимся названием"
+                            showError = true
+                        } else {
+                            newCategoryName = ""
+                            selectedColor = .white
+                        }
                     }
                 }
                 
@@ -26,7 +31,7 @@ struct ManageCategoriesView: View {
                             Text(category.name)
                             Spacer()
                             Circle()
-                                .fill(Color(category.color))
+                                .fill(category.color)
                                 .frame(width: 20, height: 20)
                         }
                     }
@@ -38,7 +43,9 @@ struct ManageCategoriesView: View {
                 }
             }
             .navigationTitle("Управление категориями")
+            .alert(isPresented: $showError) {
+                Alert(title: Text("Ошибка"), message: Text(errorMessage), dismissButton: .default(Text("Ок")))
+            }
         }
     }
 }
-

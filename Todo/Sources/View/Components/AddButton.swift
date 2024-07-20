@@ -2,14 +2,13 @@ import SwiftUI
 import FileCacheUnit
 
 struct AddButton: View {
-    @ObservedObject var viewModel: ViewModel
+    @ObservedObject var viewModel: ListTodoitemsViewModel
     @State private var showModal = false
     @State private var newItem: Todoitem?
 
     var body: some View {
         Button(action: {
             let newItem = Todoitem(text: "", isDone: false)
-            viewModel.addItem(newItem)
             self.newItem = newItem
             showModal = true
         }) {
@@ -24,7 +23,7 @@ struct AddButton: View {
         }
         .sheet(isPresented: $showModal) {
             if let newItem = newItem {
-                TodoitemDetailView(item: newItem).environmentObject(viewModel)
+                TodoitemDetailView(item: newItem, isNew: true).environmentObject(viewModel)
             }
         }
     }

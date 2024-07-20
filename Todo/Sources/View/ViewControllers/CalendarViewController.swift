@@ -8,7 +8,7 @@ protocol CalendarViewControllerDelegate: AnyObject {
 }
 
 class CalendarViewController: UIViewController {
-    var viewModel: ViewModel!
+    var viewModel: ListTodoitemsViewModel!
     weak var delegate: CalendarViewControllerDelegate?
 
     private var tableView: UITableView!

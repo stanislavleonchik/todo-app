@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @EnvironmentObject var viewModel: ViewModel
+    @EnvironmentObject var viewModel: ListTodoitemsViewModel
     
     var body: some View {
         NavigationView {

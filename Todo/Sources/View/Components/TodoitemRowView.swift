@@ -48,11 +48,11 @@ struct TodoitemRowView: View {
         HStack(spacing: 4) {
             Text("")
             switch item.importance {
-            case .unimportant:
+            case .low:
                 arrowdownImage
             case .important:
                 exclamationMarkImage
-            case .ordinary:
+            case .basic:
                 EmptyView()
             }
             bodyText

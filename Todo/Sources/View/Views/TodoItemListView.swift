@@ -2,7 +2,7 @@ import SwiftUI
 import FileCacheUnit
 
 struct TodoItemListView: View {
-    @EnvironmentObject var viewModel: ViewModel
+    @EnvironmentObject var viewModel: ListTodoitemsViewModel
     @Binding var selectedItem: Todoitem?
     @Binding var showModal: Bool
 
@@ -45,12 +45,11 @@ struct TodoItemListView: View {
                     .contentShape(Rectangle())
                     .onTapGesture {
                         let newItem = Todoitem(text: "", isDone: false)
-                        viewModel.addItem(newItem)
                         selectedItem = newItem
                         showModal = true
                     }
                     .sheet(item: $selectedItem) { item in
-                        TodoitemDetailView(item: item).environmentObject(viewModel)
+                        TodoitemDetailView(item: item, isNew: item.text.isEmpty).environmentObject(viewModel)
                     }
             }
         }
@@ -60,5 +59,5 @@ struct TodoItemListView: View {
 
 #Preview {
     TodoItemListView(selectedItem: .constant(nil), showModal: .constant(false))
-        .environmentObject(ViewModel())
+        .environmentObject(ListTodoitemsViewModel())
 }

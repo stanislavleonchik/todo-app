@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct HeaderView: View {
-    @EnvironmentObject var viewModel: ViewModel
+    @EnvironmentObject var viewModel: ListTodoitemsViewModel
     
     var body: some View {
         HStack {
@@ -44,5 +44,5 @@ struct HeaderView: View {
 
 #Preview {
     HeaderView()
-        .environmentObject(ViewModel())
+        .environmentObject(ListTodoitemsViewModel())
 }
