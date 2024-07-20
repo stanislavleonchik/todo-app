@@ -40,6 +40,12 @@
 		CBAE33192C4B0CA300B518D8 /* Todoitem+Csv.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBF509F52C4AA62D004D50A7 /* Todoitem+Csv.swift */; };
 		CBAE331A2C4B0CA700B518D8 /* TodoCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBF509F32C4AA62D004D50A7 /* TodoCategory.swift */; };
 		CBAE331B2C4B0CAD00B518D8 /* TodoitemDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBF509F72C4AA62D004D50A7 /* TodoitemDTO.swift */; };
+		CBAE332A2C4B44DC00B518D8 /* NetworkingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBAE33292C4B44DC00B518D8 /* NetworkingService.swift */; };
+		CBAE332B2C4B44DC00B518D8 /* NetworkingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBAE33292C4B44DC00B518D8 /* NetworkingService.swift */; };
+		CBAE332D2C4B451700B518D8 /* DefaultNetworkingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBAE332C2C4B451700B518D8 /* DefaultNetworkingService.swift */; };
+		CBAE332E2C4B451700B518D8 /* DefaultNetworkingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBAE332C2C4B451700B518D8 /* DefaultNetworkingService.swift */; };
+		CBAE33302C4B453D00B518D8 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBAE332F2C4B453D00B518D8 /* Configuration.swift */; };
+		CBAE33312C4B453D00B518D8 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBAE332F2C4B453D00B518D8 /* Configuration.swift */; };
 		CBF509F92C4AA62D004D50A7 /* TodoCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBF509F32C4AA62D004D50A7 /* TodoCategory.swift */; };
 		CBF509FA2C4AA62D004D50A7 /* Todoitem.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBF509F42C4AA62D004D50A7 /* Todoitem.swift */; };
 		CBF509FB2C4AA62D004D50A7 /* Todoitem+Csv.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBF509F52C4AA62D004D50A7 /* Todoitem+Csv.swift */; };
@@ -95,6 +101,9 @@
 		CB3FDE672C48C312008F8303 /* ViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
 		CB3FDE692C48C313008F8303 /* URLSession+dataTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "URLSession+dataTask.swift"; sourceTree = "<group>"; };
 		CB7296F02C48C43E0099A06C /* .gitignore */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		CBAE33292C4B44DC00B518D8 /* NetworkingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkingService.swift; sourceTree = "<group>"; };
+		CBAE332C2C4B451700B518D8 /* DefaultNetworkingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultNetworkingService.swift; sourceTree = "<group>"; };
+		CBAE332F2C4B453D00B518D8 /* Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
 		CBF509F32C4AA62D004D50A7 /* TodoCategory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TodoCategory.swift; sourceTree = "<group>"; };
 		CBF509F42C4AA62D004D50A7 /* Todoitem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Todoitem.swift; sourceTree = "<group>"; };
 		CBF509F52C4AA62D004D50A7 /* Todoitem+Csv.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Todoitem+Csv.swift"; sourceTree = "<group>"; };
@@ -183,6 +192,7 @@
 		CB15AA8E2C48B3C70007AEAA /* Todo */ = {
 			isa = PBXGroup;
 			children = (
+				CBAE33282C4B44CC00B518D8 /* Network */,
 				CBF509F82C4AA62D004D50A7 /* Model */,
 				CB3FDE6A2C48C313008F8303 /* Extensions */,
 				CB3FDE642C48C312008F8303 /* Preview Content */,
@@ -277,6 +287,16 @@
 				CB3FDE692C48C313008F8303 /* URLSession+dataTask.swift */,
 			);
 			path = Extensions;
+			sourceTree = "<group>";
+		};
+		CBAE33282C4B44CC00B518D8 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				CBAE33292C4B44DC00B518D8 /* NetworkingService.swift */,
+				CBAE332C2C4B451700B518D8 /* DefaultNetworkingService.swift */,
+				CBAE332F2C4B453D00B518D8 /* Configuration.swift */,
+			);
+			path = Network;
 			sourceTree = "<group>";
 		};
 		CBF509F82C4AA62D004D50A7 /* Model */ = {
@@ -507,11 +527,13 @@
 				CB3FDE792C48C313008F8303 /* TodoView.swift in Sources */,
 				CB3FDE772C48C313008F8303 /* TodoitemDetailView.swift in Sources */,
 				CBF509FD2C4AA62D004D50A7 /* TodoitemDTO.swift in Sources */,
+				CBAE332A2C4B44DC00B518D8 /* NetworkingService.swift in Sources */,
 				CB3FDE6E2C48C313008F8303 /* DateCell.swift in Sources */,
 				CBF509FB2C4AA62D004D50A7 /* Todoitem+Csv.swift in Sources */,
 				CB3FDE7F2C48C313008F8303 /* URLSession+dataTask.swift in Sources */,
 				CB3FDE742C48C313008F8303 /* CalendarViewControllerWrapper.swift in Sources */,
 				CB3FDE7E2C48C313008F8303 /* ViewModel.swift in Sources */,
+				CBAE33302C4B453D00B518D8 /* Configuration.swift in Sources */,
 				CB3FDE702C48C313008F8303 /* RoundedSectionHeaderView.swift in Sources */,
 				CBF509F92C4AA62D004D50A7 /* TodoCategory.swift in Sources */,
 				CBF509FA2C4AA62D004D50A7 /* Todoitem.swift in Sources */,
@@ -524,6 +546,7 @@
 				CB3FDE722C48C313008F8303 /* TodoitemRowView.swift in Sources */,
 				CB3FDE762C48C313008F8303 /* SettingsView.swift in Sources */,
 				CB3FDE7D2C48C313008F8303 /* TodoApp.swift in Sources */,
+				CBAE332D2C4B451700B518D8 /* DefaultNetworkingService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -534,9 +557,12 @@
 				CBAE331A2C4B0CA700B518D8 /* TodoCategory.swift in Sources */,
 				CBAE33172C4AFA2400B518D8 /* Todoitem.swift in Sources */,
 				CBAE33192C4B0CA300B518D8 /* Todoitem+Csv.swift in Sources */,
+				CBAE33312C4B453D00B518D8 /* Configuration.swift in Sources */,
 				CBAE33182C4B0CA100B518D8 /* Todoitem+Json.swift in Sources */,
 				CBAE331B2C4B0CAD00B518D8 /* TodoitemDTO.swift in Sources */,
+				CBAE332B2C4B44DC00B518D8 /* NetworkingService.swift in Sources */,
 				CB15AAA12C48B3C80007AEAA /* TodoTests.swift in Sources */,
+				CBAE332E2C4B451700B518D8 /* DefaultNetworkingService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

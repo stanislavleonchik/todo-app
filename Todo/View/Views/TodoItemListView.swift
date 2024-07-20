@@ -45,12 +45,11 @@ struct TodoItemListView: View {
                     .contentShape(Rectangle())
                     .onTapGesture {
                         let newItem = Todoitem(text: "", isDone: false)
-                        viewModel.addItem(newItem)
                         selectedItem = newItem
                         showModal = true
                     }
                     .sheet(item: $selectedItem) { item in
-                        TodoitemDetailView(item: item).environmentObject(viewModel)
+                        TodoitemDetailView(item: item, isNew: item.text.isEmpty).environmentObject(viewModel)
                     }
             }
         }
