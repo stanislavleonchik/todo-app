@@ -17,7 +17,7 @@ struct TodoitemDetailView: View {
     @State private var selectedColor: Color = .white
     @State private var brightness: Double = 1.0
     @State private var selectedCategory: TodoCategory
-    private let importanceOptions: [Todoitem.Importance] = [.low, .basic, .important]
+    private let importanceOptions: [Importance] = [.low, .basic, .important]
     
     init(item: Todoitem, isNew: Bool = false) {
         self.item = item
@@ -28,7 +28,7 @@ struct TodoitemDetailView: View {
         if let colorHex = item.color {
             self._selectedColor = State(initialValue: Color(hex: colorHex) ?? .clear)
         }
-        self._selectedCategory = State(initialValue: item.category)
+        self._selectedCategory = State(initialValue: item.category ?? .other)
     }
     
     var body: some View {

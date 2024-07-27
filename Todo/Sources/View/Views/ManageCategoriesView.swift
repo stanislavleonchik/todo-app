@@ -14,7 +14,7 @@ struct ManageCategoriesView: View {
                     TextField("Название категории", text: $newCategoryName)
                     ColorPicker("Цвет категории", selection: $selectedColor)
                     Button("Добавить") {
-                        let newCategory = TodoCategory(name: newCategoryName, color: selectedColor)
+                        let newCategory = TodoCategory(name: newCategoryName, color: selectedColor.toHex())
                         if !viewModel.addCategory(newCategory) {
                             errorMessage = "Категория не может быть с пустым названием или с дублирующимся названием"
                             showError = true
@@ -31,7 +31,7 @@ struct ManageCategoriesView: View {
                             Text(category.name)
                             Spacer()
                             Circle()
-                                .fill(category.color)
+                                .fill(Color(hex: category.color ?? "05FF00FF") ?? .clear)
                                 .frame(width: 20, height: 20)
                         }
                     }

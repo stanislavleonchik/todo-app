@@ -1,19 +1,33 @@
 import Foundation
+import SwiftData
 
-struct Todoitem: Identifiable {
-    enum Importance: String {
-        case low = "low"
-        case basic = "basic"
-        case important = "important"
+enum Importance: String, Comparable, Equatable, Codable {
+    case low = "low"
+    case basic = "basic"
+    case important = "important"
+
+    var order: Int {
+        switch self {
+        case .low: return 0
+        case .basic: return 1
+        case .important: return 2
+        }
     }
-    
+
+    static func < (lhs: Importance, rhs: Importance) -> Bool {
+        return lhs.order < rhs.order
+    }
+}
+
+@Model
+final class Todoitem: Identifiable {
     let id: String
     var text: String
     var importance: Importance
     var deadline: Date?
     var isDone: Bool
-    let dateCreated: Date
-    let dateChanged: Date?
+    var dateCreated: Date
+    var dateChanged: Date?
     var color: String?
     var category: TodoCategory
     

@@ -39,7 +39,7 @@ class TodoItemCell: UITableViewCell {
         textLabel?.textColor = item.isDone ? .gray : .black
         textLabel?.attributedText = item.isDone ? NSAttributedString(string: item.text, attributes: [.strikethroughStyle: NSUnderlineStyle.single.rawValue]) : NSAttributedString(string: item.text, attributes: [:])
         
-        categoryDot.backgroundColor = UIColor(item.category.color)
+        categoryDot.backgroundColor = UIColor(hex: item.category.color ?? "05FF00FF")
         categoryDot.layer.cornerRadius = 5
         
         if isTop && isBottom {

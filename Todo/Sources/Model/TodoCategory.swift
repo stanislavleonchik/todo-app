@@ -1,17 +1,27 @@
-import SwiftUI
+import Foundation
+import SwiftData
 
-public struct TodoCategory: Identifiable, Hashable {
-    public let id = UUID()
-    public var name: String
-    public var color: Color
-    
-    public static let work = TodoCategory(name: "Work", color: .red)
-    public static let personal = TodoCategory(name: "Personal", color: .blue)
-    public static let study = TodoCategory(name: "Study", color: .green)
-    public static let other = TodoCategory(name: "Other", color: .clear)
-    
-    public init(name: String, color: Color) {
+// MARK: - Category
+@Model
+final class TodoCategory {
+
+    @Attribute(.unique) 
+    let id: String
+    var name: String
+    var color: String?
+
+    init(id: String = UUID().uuidString, name: String = "", color: String? = nil) {
+        self.id = id
         self.name = name
         self.color = color
     }
+
+    enum Keys: String {
+        case id, text, color, createdAt
+    }
+
+    public static let work = TodoCategory(name: "Work", color: "#FF3B30")
+    public static let personal = TodoCategory(name: "Personal", color: "#007AFF")
+    public static let study = TodoCategory(name: "Study", color: "#33C759")
+    public static let other = TodoCategory(name: "Other")
 }

@@ -14,7 +14,7 @@ extension Todoitem: CsvCompatible {
 
         let id = columns[0]
         let text = columns[1].trimmingCharacters(in: CharacterSet(charactersIn: "\""))
-        let importance = Todoitem.Importance(rawValue: columns[2]) ?? .basic
+        let importance = Importance(rawValue: columns[2]) ?? .basic
         let deadline = TimeInterval(columns[3])
         let isDone = Bool(columns[4]) ?? false
         let dateCreated = Date(timeIntervalSince1970: TimeInterval(columns[5])!)
